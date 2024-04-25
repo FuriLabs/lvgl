@@ -18,6 +18,7 @@
 #include "../../misc/lv_anim.h"
 #include "../../misc/lv_txt.h"
 #include "../../misc/lv_math.h"
+#include "../keyboard/lv_keyboard_global.h"
 
 /*********************
  *      DEFINES
@@ -1209,7 +1210,12 @@ static void update_cursor_position_on_click(lv_event_t * e)
         }
     }
 
-    if(ta->text_sel_in_prog || code == LV_EVENT_PRESSED) lv_textarea_set_cursor_pos(obj, char_id_at_click);
+    if (ta->text_sel_in_prog || code == LV_EVENT_PRESSED) {
+        if (char_id_at_click <= endingBufferPos && char_id_at_click >= startingBufferPos) {
+            lv_textarea_set_cursor_pos(obj, char_id_at_click);
+            commandBufferPos = char_id_at_click - startingBufferPos;
+        }
+    }
 
     if(ta->text_sel_in_prog) {
         /*If the selected area has changed then update the real values and*/

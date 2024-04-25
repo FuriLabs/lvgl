@@ -170,6 +170,9 @@ static const lv_btnmatrix_ctrl_t * kb_ctrl[10] = {
 
 int commandBufferPos = 0;
 int commandBufferLength = 0;
+char commandBuffer[BUFFER_SIZE];
+int startingBufferPos = 0;
+int endingBufferPos = 0;
 
 /**********************
  *      MACROS
@@ -332,6 +335,9 @@ void lv_keyboard_def_event_cb(lv_event_t * e)
     const char* txt = lv_btnmatrix_get_btn_text(obj, lv_btnmatrix_get_selected_btn(obj));
     if (txt == NULL) return;
 
+    if (commandBufferPos == 0)
+        startingBufferPos = lv_textarea_get_cursor_pos(keyboard->ta);
+
     if (strcmp(txt, "abc") == 0) {
         keyboard->mode = LV_KEYBOARD_MODE_TEXT_LOWER;
         lv_btnmatrix_set_map(obj, kb_map[LV_KEYBOARD_MODE_TEXT_LOWER]);
@@ -441,12 +447,13 @@ void lv_keyboard_def_event_cb(lv_event_t * e)
             lv_textarea_add_text(keyboard->ta, txt);
             if (commandBuffer[commandBufferPos] != '\0') {
                 for (int i = commandBufferLength; i > commandBufferPos; i--) {
-                    commandBuffer[i] = commandBuffer[i-1];
+                    commandBuffer[i] = commandBuffer[i - 1];
                 }
             }
             commandBuffer[commandBufferPos] = (char)txt[0];
             commandBufferPos++;
             commandBufferLength++;
+            endingBufferPos = startingBufferPos + commandBufferLength;
         }
     }
 }

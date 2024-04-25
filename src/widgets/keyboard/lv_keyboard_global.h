@@ -31,8 +31,10 @@
 
 #define BUFFER_SIZE 4096
 
-char commandBuffer[BUFFER_SIZE];
+extern char commandBuffer[BUFFER_SIZE];
 extern int commandBufferPos;
 extern int commandBufferLength;
+extern int startingBufferPos;
+extern int endingBufferPos;
 
 #endif /* LV_KEYBOARD_GLOBAL_H */
