@@ -8,6 +8,7 @@
  *      INCLUDES
  *********************/
 #include "lv_keyboard.h"
+#include "lv_keyboard_global.h"
 #if LV_USE_KEYBOARD
 
 #include "../textarea/lv_textarea.h"
@@ -174,6 +175,8 @@ static const lv_btnmatrix_ctrl_t * kb_ctrl[10] = {
  *   GLOBAL FUNCTIONS
  **********************/
 
+int commandBufferPos = 0;
+
 /**
  * Create a Keyboard object
  * @param parent pointer to an object, it will be the parent of the new keyboard
@@ -317,92 +320,109 @@ bool lv_btnmatrix_get_popovers(const lv_obj_t * obj)
  */
 void lv_keyboard_def_event_cb(lv_event_t * e)
 {
-    lv_obj_t * obj = lv_event_get_target(e);
+    lv_obj_t* obj = lv_event_get_target(e);
 
     LV_ASSERT_OBJ(obj, MY_CLASS);
-    lv_keyboard_t * keyboard = (lv_keyboard_t *)obj;
-    uint16_t btn_id   = lv_btnmatrix_get_selected_btn(obj);
-    if(btn_id == LV_BTNMATRIX_BTN_NONE) return;
+    lv_keyboard_t* keyboard = (lv_keyboard_t*)obj;
+    uint16_t btn_id = lv_btnmatrix_get_selected_btn(obj);
+    if (btn_id == LV_BTNMATRIX_BTN_NONE) return;
 
-    const char * txt = lv_btnmatrix_get_btn_text(obj, lv_btnmatrix_get_selected_btn(obj));
-    if(txt == NULL) return;
+    const char* txt = lv_btnmatrix_get_btn_text(obj, lv_btnmatrix_get_selected_btn(obj));
+    if (txt == NULL) return;
 
-    if(strcmp(txt, "abc") == 0) {
+    if (strcmp(txt, "abc") == 0) {
         keyboard->mode = LV_KEYBOARD_MODE_TEXT_LOWER;
         lv_btnmatrix_set_map(obj, kb_map[LV_KEYBOARD_MODE_TEXT_LOWER]);
         lv_keyboard_update_ctrl_map(obj);
         return;
     }
 #if LV_USE_ARABIC_PERSIAN_CHARS == 1
-    else if(strcmp(txt, "أب") == 0) {
+    else if (strcmp(txt, "أب") == 0) {
         keyboard->mode = LV_KEYBOARD_MODE_TEXT_ARABIC;
         lv_btnmatrix_set_map(obj, kb_map[LV_KEYBOARD_MODE_TEXT_ARABIC]);
         lv_keyboard_update_ctrl_map(obj);
         return;
     }
 #endif
-    else if(strcmp(txt, "ABC") == 0) {
+    else if (strcmp(txt, "ABC") == 0) {
         keyboard->mode = LV_KEYBOARD_MODE_TEXT_UPPER;
         lv_btnmatrix_set_map(obj, kb_map[LV_KEYBOARD_MODE_TEXT_UPPER]);
         lv_keyboard_update_ctrl_map(obj);
         return;
     }
-    else if(strcmp(txt, "1#") == 0) {
+    else if (strcmp(txt, "1#") == 0) {
         keyboard->mode = LV_KEYBOARD_MODE_SPECIAL;
         lv_btnmatrix_set_map(obj, kb_map[LV_KEYBOARD_MODE_SPECIAL]);
         lv_keyboard_update_ctrl_map(obj);
         return;
     }
-    else if(strcmp(txt, LV_SYMBOL_CLOSE) == 0 || strcmp(txt, LV_SYMBOL_KEYBOARD) == 0) {
+    else if (strcmp(txt, LV_SYMBOL_CLOSE) == 0 || strcmp(txt, LV_SYMBOL_KEYBOARD) == 0) {
         lv_res_t res = lv_event_send(obj, LV_EVENT_CANCEL, NULL);
-        if(res != LV_RES_OK) return;
+        if (res != LV_RES_OK) return;
 
-        if(keyboard->ta) {
+        if (keyboard->ta) {
             res = lv_event_send(keyboard->ta, LV_EVENT_CANCEL, NULL);
-            if(res != LV_RES_OK) return;
+            if (res != LV_RES_OK) return;
         }
         return;
     }
-    else if(strcmp(txt, LV_SYMBOL_OK) == 0) {
+    else if (strcmp(txt, LV_SYMBOL_OK) == 0) {
         lv_res_t res = lv_event_send(obj, LV_EVENT_READY, NULL);
-        if(res != LV_RES_OK) return;
+        if (res != LV_RES_OK) return;
 
-        if(keyboard->ta) {
+        if (keyboard->ta) {
             res = lv_event_send(keyboard->ta, LV_EVENT_READY, NULL);
-            if(res != LV_RES_OK) return;
+            if (res != LV_RES_OK) return;
         }
         return;
     }
 
     /*Add the characters to the text area if set*/
-    if(keyboard->ta == NULL) return;
+    if (keyboard->ta == NULL) return;
 
-    if(strcmp(txt, "Enter") == 0 || strcmp(txt, LV_SYMBOL_NEW_LINE) == 0) {
+    if (strcmp(txt, "Enter") == 0 || strcmp(txt, LV_SYMBOL_NEW_LINE) == 0) {
         lv_textarea_add_char(keyboard->ta, '\n');
-        if(lv_textarea_get_one_line(keyboard->ta)) {
+        if (lv_textarea_get_one_line(keyboard->ta)) {
             lv_res_t res = lv_event_send(keyboard->ta, LV_EVENT_READY, NULL);
-            if(res != LV_RES_OK) return;
+            if (res != LV_RES_OK) return;
         }
     }
-    else if(strcmp(txt, LV_SYMBOL_LEFT) == 0) {
-        lv_textarea_cursor_left(keyboard->ta);
+    else if (strcmp(txt, LV_SYMBOL_LEFT) == 0) {
+        if (commandBufferPos > 0) {
+            lv_textarea_cursor_left(keyboard->ta);
+            commandBufferPos--;
+        }
     }
-    else if(strcmp(txt, LV_SYMBOL_RIGHT) == 0) {
-        lv_textarea_cursor_right(keyboard->ta);
+    else if (strcmp(txt, LV_SYMBOL_RIGHT) == 0) {
+        if (commandBufferPos < BUFFER_SIZE && commandBuffer[commandBufferPos] != '\0') {
+            lv_textarea_cursor_right(keyboard->ta);
+            commandBufferPos++;
+        }
     }
-    else if(strcmp(txt, LV_SYMBOL_BACKSPACE) == 0) {
-        lv_textarea_del_char(keyboard->ta);
+    else if (strcmp(txt, LV_SYMBOL_BACKSPACE) == 0) {
+        if (commandBufferPos > 0) {
+            lv_textarea_del_char(keyboard->ta);
+            if (commandBuffer[commandBufferPos+1 == BUFFER_SIZE ? BUFFER_SIZE-1 : commandBufferPos+1] != '\0') {
+                for (int i = commandBufferPos; i < BUFFER_SIZE; i++) {
+                    commandBuffer[i] = commandBuffer[i+1];
+                }
+                commandBuffer[BUFFER_SIZE - 1] = '\0';
+            }
+            commandBufferPos--;
+            commandBuffer[commandBufferPos] = '\0';
+            printf("%d\n", commandBufferPos);
+        }
     }
-    else if(strcmp(txt, "+/-") == 0) {
-        uint16_t cur        = lv_textarea_get_cursor_pos(keyboard->ta);
-        const char * ta_txt = lv_textarea_get_text(keyboard->ta);
-        if(ta_txt[0] == '-') {
+    else if (strcmp(txt, "+/-") == 0) {
+        uint16_t cur = lv_textarea_get_cursor_pos(keyboard->ta);
+        const char* ta_txt = lv_textarea_get_text(keyboard->ta);
+        if (ta_txt[0] == '-') {
             lv_textarea_set_cursor_pos(keyboard->ta, 1);
             lv_textarea_del_char(keyboard->ta);
             lv_textarea_add_char(keyboard->ta, '+');
             lv_textarea_set_cursor_pos(keyboard->ta, cur);
         }
-        else if(ta_txt[0] == '+') {
+        else if (ta_txt[0] == '+') {
             lv_textarea_set_cursor_pos(keyboard->ta, 1);
             lv_textarea_del_char(keyboard->ta);
             lv_textarea_add_char(keyboard->ta, '-');
@@ -415,7 +435,16 @@ void lv_keyboard_def_event_cb(lv_event_t * e)
         }
     }
     else {
-        lv_textarea_add_text(keyboard->ta, txt);
+        if (commandBufferPos < BUFFER_SIZE) {
+            lv_textarea_add_text(keyboard->ta, txt);
+            if (commandBuffer[commandBufferPos] != '\0') {
+                for (int i = commandBufferPos; i < BUFFER_SIZE; i++) {
+                    commandBuffer[i + 1] = commandBuffer[i];
+                }
+            }
+            commandBuffer[commandBufferPos] = (char)txt[0];
+            commandBufferPos++;
+        }
     }
 }
 
