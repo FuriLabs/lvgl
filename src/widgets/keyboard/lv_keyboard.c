@@ -15,6 +15,7 @@
 #include "../../misc/lv_assert.h"
 
 #include <stdlib.h>
+#include <stdio.h>
 
 /*********************
  *      DEFINES
@@ -167,6 +168,9 @@ static const lv_btnmatrix_ctrl_t * kb_ctrl[10] = {
     NULL
 };
 
+int commandBufferPos = 0;
+int commandBufferLength = 0;
+
 /**********************
  *      MACROS
  **********************/
@@ -174,8 +178,6 @@ static const lv_btnmatrix_ctrl_t * kb_ctrl[10] = {
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
-
-int commandBufferPos = 0;
 
 /**
  * Create a Keyboard object
@@ -403,14 +405,14 @@ void lv_keyboard_def_event_cb(lv_event_t * e)
         if (commandBufferPos > 0) {
             lv_textarea_del_char(keyboard->ta);
             if (commandBuffer[commandBufferPos+1 == BUFFER_SIZE ? BUFFER_SIZE-1 : commandBufferPos+1] != '\0') {
-                for (int i = commandBufferPos; i < BUFFER_SIZE; i++) {
+                for (int i = commandBufferPos; i < commandBufferLength-1; i++) {
                     commandBuffer[i] = commandBuffer[i+1];
                 }
                 commandBuffer[BUFFER_SIZE - 1] = '\0';
             }
             commandBufferPos--;
+            commandBufferLength--;
             commandBuffer[commandBufferPos] = '\0';
-            printf("%d\n", commandBufferPos);
         }
     }
     else if (strcmp(txt, "+/-") == 0) {
@@ -438,12 +440,13 @@ void lv_keyboard_def_event_cb(lv_event_t * e)
         if (commandBufferPos < BUFFER_SIZE) {
             lv_textarea_add_text(keyboard->ta, txt);
             if (commandBuffer[commandBufferPos] != '\0') {
-                for (int i = commandBufferPos; i < BUFFER_SIZE; i++) {
-                    commandBuffer[i + 1] = commandBuffer[i];
+                for (int i = commandBufferLength; i > commandBufferPos; i--) {
+                    commandBuffer[i] = commandBuffer[i-1];
                 }
             }
             commandBuffer[commandBufferPos] = (char)txt[0];
             commandBufferPos++;
+            commandBufferLength++;
         }
     }
 }

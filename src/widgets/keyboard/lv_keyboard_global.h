@@ -33,5 +33,6 @@
 
 char commandBuffer[BUFFER_SIZE];
 extern int commandBufferPos;
+extern int commandBufferLength;
 
 #endif /* LV_KEYBOARD_GLOBAL_H */
