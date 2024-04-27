@@ -32,6 +32,7 @@
 #define BUFFER_SIZE 4096
 
 extern char commandBuffer[BUFFER_SIZE];
+extern bool commandReadyToSend;
 extern int commandBufferPos;
 extern int commandBufferLength;
 extern int startingBufferPos;
