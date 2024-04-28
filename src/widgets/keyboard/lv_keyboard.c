@@ -392,7 +392,7 @@ void lv_keyboard_def_event_cb(lv_event_t * e)
     if (strcmp(txt, "Enter") == 0 || strcmp(txt, LV_SYMBOL_NEW_LINE) == 0) {
         lv_textarea_add_char(keyboard->ta, '\n');
         
-        commandBuffer[commandBufferPos + 1] = '\n';
+        commandBuffer[commandBufferPos] = '\n';
         commandReadyToSend = true;
         
         if (lv_textarea_get_one_line(keyboard->ta)) {
