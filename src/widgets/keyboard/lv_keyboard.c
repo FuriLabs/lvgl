@@ -51,7 +51,7 @@ const lv_obj_class_t lv_keyboard_class = {
 static const char * const default_kb_map_lc[] = {"1#", "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", LV_SYMBOL_BACKSPACE, "\n",
                                                  "ABC", "a", "s", "d", "f", "g", "h", "j", "k", "l", LV_SYMBOL_NEW_LINE, "\n",
                                                  "_", "-", "z", "x", "c", "v", "b", "n", "m", ".", ",", ":", "\n",
-                                                 LV_SYMBOL_KEYBOARD,
+                                                 "Ctrl",
 #if LV_USE_ARABIC_PERSIAN_CHARS == 1
                                                  "أب",
 #endif
@@ -72,7 +72,7 @@ static const lv_btnmatrix_ctrl_t default_kb_ctrl_lc_map[] = {
 static const char * const default_kb_map_uc[] = {"1#", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", LV_SYMBOL_BACKSPACE, "\n",
                                                  "abc", "A", "S", "D", "F", "G", "H", "J", "K", "L", LV_SYMBOL_NEW_LINE, "\n",
                                                  "_", "-", "Z", "X", "C", "V", "B", "N", "M", ".", ",", ":", "\n",
-                                                 LV_SYMBOL_CLOSE,
+                                                 "Ctrl",
 #if LV_USE_ARABIC_PERSIAN_CHARS == 1
                                                  "أب",
 #endif
