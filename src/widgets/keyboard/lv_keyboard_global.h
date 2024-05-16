@@ -33,6 +33,7 @@
 
 extern char commandBuffer[BUFFER_SIZE];
 extern bool commandReadyToSend;
+extern bool sigINTSent;
 extern int commandBufferPos;
 extern int commandBufferLength;
 extern int startingBufferPos;
