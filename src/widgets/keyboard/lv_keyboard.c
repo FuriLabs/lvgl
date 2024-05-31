@@ -49,13 +49,13 @@ const lv_obj_class_t lv_keyboard_class = {
 };
 
 static const char * const default_kb_map_lc[] = {"1#", "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", LV_SYMBOL_BACKSPACE, "\n",
-                                                 "ABC", "a", "s", "d", "f", "g", "h", "j", "k", "l", LV_SYMBOL_NEW_LINE, "\n",
+                                                 "ABC", "a", "s", "d", "f", "g", "h", "j", "k", "l", "&", "\n",
                                                  "_", "-", "z", "x", "c", "v", "b", "n", "m", ".", ",", ":", "\n",
                                                  "Ctrl+C",
 #if LV_USE_ARABIC_PERSIAN_CHARS == 1
                                                  "أب",
 #endif
-                                                 LV_SYMBOL_LEFT, " ", LV_SYMBOL_RIGHT, LV_SYMBOL_OK, ""
+                                                 LV_SYMBOL_LEFT, " ", LV_SYMBOL_RIGHT, LV_SYMBOL_NEW_LINE, ""
                                                 };
 
 static const lv_btnmatrix_ctrl_t default_kb_ctrl_lc_map[] = {
@@ -70,13 +70,13 @@ static const lv_btnmatrix_ctrl_t default_kb_ctrl_lc_map[] = {
 };
 
 static const char * const default_kb_map_uc[] = {"1#", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", LV_SYMBOL_BACKSPACE, "\n",
-                                                 "abc", "A", "S", "D", "F", "G", "H", "J", "K", "L", LV_SYMBOL_NEW_LINE, "\n",
+                                                 "abc", "A", "S", "D", "F", "G", "H", "J", "K", "L", "&", "\n",
                                                  "_", "-", "Z", "X", "C", "V", "B", "N", "M", ".", ",", ":", "\n",
                                                  "Ctrl+C",
 #if LV_USE_ARABIC_PERSIAN_CHARS == 1
                                                  "أب",
 #endif
-                                                 LV_SYMBOL_LEFT, " ", LV_SYMBOL_RIGHT, LV_SYMBOL_OK, ""
+                                                 LV_SYMBOL_LEFT, " ", LV_SYMBOL_RIGHT, LV_SYMBOL_NEW_LINE, ""
                                                 };
 
 static const lv_btnmatrix_ctrl_t default_kb_ctrl_uc_map[] = {
@@ -112,7 +112,7 @@ static const char * const default_kb_map_spec[] = {"1", "2", "3", "4", "5", "6",
 #if LV_USE_ARABIC_PERSIAN_CHARS == 1
                                                    "أب",
 #endif
-                                                   LV_SYMBOL_LEFT, " ", LV_SYMBOL_RIGHT, LV_SYMBOL_OK, ""
+                                                   LV_SYMBOL_LEFT, " ", LV_SYMBOL_RIGHT, LV_SYMBOL_NEW_LINE, ""
                                                   };
 
 static const lv_btnmatrix_ctrl_t default_kb_ctrl_spec_map[] = {
@@ -168,13 +168,13 @@ static const lv_btnmatrix_ctrl_t * kb_ctrl[10] = {
     NULL
 };
 
-int commandBufferPos = 0;
-int commandBufferLength = 0;
-char commandBuffer[BUFFER_SIZE];
-int startingBufferPos = 0;
-int endingBufferPos = 0;
-bool commandReadyToSend = false;
-bool sigINTSent = false;
+int command_buffer_pos = 0;
+int command_buffer_length = 0;
+char command_buffer[BUFFER_SIZE];
+int starting_buffer_pos = 0;
+int ending_buffer_pos = 0;
+bool command_ready_to_send = false;
+bool sig_int_sent = false;
 
 /**********************
  *      MACROS
@@ -337,8 +337,8 @@ void lv_keyboard_def_event_cb(lv_event_t * e)
     const char* txt = lv_btnmatrix_get_btn_text(obj, lv_btnmatrix_get_selected_btn(obj));
     if (txt == NULL) return;
 
-    if (commandBufferPos == 0)
-        startingBufferPos = lv_textarea_get_cursor_pos(keyboard->ta);
+    if (command_buffer_pos == 0)
+        starting_buffer_pos = lv_textarea_get_cursor_pos(keyboard->ta);
 
     if (strcmp(txt, "abc") == 0) {
         keyboard->mode = LV_KEYBOARD_MODE_TEXT_LOWER;
@@ -393,8 +393,8 @@ void lv_keyboard_def_event_cb(lv_event_t * e)
     if (strcmp(txt, "Enter") == 0 || strcmp(txt, LV_SYMBOL_NEW_LINE) == 0) {
         lv_textarea_add_char(keyboard->ta, '\n');
         
-        commandBuffer[commandBufferPos] = '\n';
-        commandReadyToSend = true;
+        command_buffer[command_buffer_pos] = '\n';
+        command_ready_to_send = true;
         
         if (lv_textarea_get_one_line(keyboard->ta)) {
             lv_res_t res = lv_event_send(keyboard->ta, LV_EVENT_READY, NULL);
@@ -402,29 +402,29 @@ void lv_keyboard_def_event_cb(lv_event_t * e)
         }
     }
     else if (strcmp(txt, LV_SYMBOL_LEFT) == 0) {
-        if (commandBufferPos > 0) {
+        if (command_buffer_pos > 0) {
             lv_textarea_cursor_left(keyboard->ta);
-            commandBufferPos--;
+            command_buffer_pos--;
         }
     }
     else if (strcmp(txt, LV_SYMBOL_RIGHT) == 0) {
-        if (commandBufferPos < BUFFER_SIZE && commandBuffer[commandBufferPos] != '\0') {
+        if (command_buffer_pos < BUFFER_SIZE && command_buffer[command_buffer_pos] != '\0') {
             lv_textarea_cursor_right(keyboard->ta);
-            commandBufferPos++;
+            command_buffer_pos++;
         }
     }
     else if (strcmp(txt, LV_SYMBOL_BACKSPACE) == 0) {
-        if (commandBufferPos > 0) {
+        if (command_buffer_pos > 0) {
             lv_textarea_del_char(keyboard->ta);
-            if (commandBuffer[commandBufferPos+1 == BUFFER_SIZE ? BUFFER_SIZE-1 : commandBufferPos+1] != '\0') {
-                for (int i = commandBufferPos; i < commandBufferLength-1; i++) {
-                    commandBuffer[i] = commandBuffer[i+1];
+            if (command_buffer[command_buffer_pos+1 == BUFFER_SIZE ? BUFFER_SIZE-1 : command_buffer_pos+1] != '\0') {
+                for (int i = command_buffer_pos; i < command_buffer_length-1; i++) {
+                    command_buffer[i] = command_buffer[i+1];
                 }
-                commandBuffer[BUFFER_SIZE - 1] = '\0';
+                command_buffer[BUFFER_SIZE - 1] = '\0';
             }
-            commandBufferPos--;
-            commandBufferLength--;
-            commandBuffer[commandBufferPos] = '\0';
+            command_buffer_pos--;
+            command_buffer_length--;
+            command_buffer[command_buffer_pos] = '\0';
         }
     }
     else if (strcmp(txt, "+/-") == 0) {
@@ -449,20 +449,20 @@ void lv_keyboard_def_event_cb(lv_event_t * e)
         }
     }
     else if (strcmp(txt,"Ctrl+C") == 0){
-        sigINTSent = true;
+        sig_int_sent = true;
     }
     else {
-        if (commandBufferPos < BUFFER_SIZE) {
+        if (command_buffer_pos < BUFFER_SIZE) {
             lv_textarea_add_text(keyboard->ta, txt);
-            if (commandBuffer[commandBufferPos] != '\0') {
-                for (int i = commandBufferLength; i > commandBufferPos; i--) {
-                    commandBuffer[i] = commandBuffer[i - 1];
+            if (command_buffer[command_buffer_pos] != '\0') {
+                for (int i = command_buffer_length; i > command_buffer_pos; i--) {
+                    command_buffer[i] = command_buffer[i - 1];
                 }
             }
-            commandBuffer[commandBufferPos] = (char)txt[0];
-            commandBufferPos++;
-            commandBufferLength++;
-            endingBufferPos = startingBufferPos + commandBufferLength;
+            command_buffer[command_buffer_pos] = (char)txt[0];
+            command_buffer_pos++;
+            command_buffer_length++;
+            ending_buffer_pos = starting_buffer_pos + command_buffer_length;
         }
     }
 }

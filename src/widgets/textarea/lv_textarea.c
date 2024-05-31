@@ -1211,9 +1211,9 @@ static void update_cursor_position_on_click(lv_event_t * e)
     }
 
     if (ta->text_sel_in_prog || code == LV_EVENT_PRESSED) {
-        if (char_id_at_click <= endingBufferPos && char_id_at_click >= startingBufferPos) {
+        if (char_id_at_click <= ending_buffer_pos && char_id_at_click >= starting_buffer_pos) {
             lv_textarea_set_cursor_pos(obj, char_id_at_click);
-            commandBufferPos = char_id_at_click - startingBufferPos;
+            command_buffer_pos = char_id_at_click - starting_buffer_pos;
         }
     }
 

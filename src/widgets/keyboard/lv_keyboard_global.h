@@ -31,12 +31,12 @@
 
 #define BUFFER_SIZE 4096
 
-extern char commandBuffer[BUFFER_SIZE];
-extern bool commandReadyToSend;
-extern bool sigINTSent;
-extern int commandBufferPos;
-extern int commandBufferLength;
-extern int startingBufferPos;
-extern int endingBufferPos;
+extern char command_buffer[BUFFER_SIZE];
+extern bool command_ready_to_send;
+extern bool sig_int_sent;
+extern int command_buffer_pos;
+extern int command_buffer_length;
+extern int starting_buffer_pos;
+extern int ending_buffer_pos;
 
 #endif /* LV_KEYBOARD_GLOBAL_H */
