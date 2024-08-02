@@ -48,10 +48,10 @@ const lv_obj_class_t lv_keyboard_class = {
     .base_class = &lv_btnmatrix_class
 };
 
-static const char * const default_kb_map_lc[] = {"1#", "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", LV_SYMBOL_BACKSPACE, "\n",
-                                                 "ABC", "a", "s", "d", "f", "g", "h", "j", "k", "l", "&", "|", "\n",
-                                                 "_", "-", "z", "x", "c", "v", "b", "n", "m", ".", ",", ":", "\n",
-                                                 "Ctrl+C",
+static const char * const default_kb_map_lc[] = {"Ctrl+Z", "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "Ctrl+R", "\n",
+                                                 "Ctrl+C", "a", "s", "d", "f", "g", "h", "j", "k", "l", "Ctrl+X", "\n",
+                                                 "ABC", "z", "x", "c", "v", "b", "n", "m", LV_SYMBOL_BACKSPACE, "\n",
+                                                 "123",
 #if LV_USE_ARABIC_PERSIAN_CHARS == 1
                                                  "أب",
 #endif
@@ -59,20 +59,20 @@ static const char * const default_kb_map_lc[] = {"1#", "q", "w", "e", "r", "t", 
                                                 };
 
 static const lv_btnmatrix_ctrl_t default_kb_ctrl_lc_map[] = {
-    LV_KEYBOARD_CTRL_BTN_FLAGS | 5, LV_KB_BTN(4), LV_KB_BTN(4), LV_KB_BTN(4), LV_KB_BTN(4), LV_KB_BTN(4), LV_KB_BTN(4), LV_KB_BTN(4), LV_KB_BTN(4), LV_KB_BTN(4), LV_KB_BTN(4), LV_BTNMATRIX_CTRL_CHECKED | 7,
-    LV_KEYBOARD_CTRL_BTN_FLAGS | 6, LV_KB_BTN(3), LV_KB_BTN(3), LV_KB_BTN(3), LV_KB_BTN(3), LV_KB_BTN(3), LV_KB_BTN(3), LV_KB_BTN(3), LV_KB_BTN(3), LV_KB_BTN(3), LV_KB_BTN(3), LV_BTNMATRIX_CTRL_CHECKED | 7,
-    LV_BTNMATRIX_CTRL_CHECKED | LV_KB_BTN(1), LV_BTNMATRIX_CTRL_CHECKED | LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_BTNMATRIX_CTRL_CHECKED | LV_KB_BTN(1), LV_BTNMATRIX_CTRL_CHECKED | LV_KB_BTN(1), LV_BTNMATRIX_CTRL_CHECKED | LV_KB_BTN(1),
+    LV_KEYBOARD_CTRL_BTN_FLAGS | 5, LV_KB_BTN(4), LV_KB_BTN(4), LV_KB_BTN(4), LV_KB_BTN(4), LV_KB_BTN(4), LV_KB_BTN(4), LV_KB_BTN(4), LV_KB_BTN(4), LV_KB_BTN(4), LV_KB_BTN(4), LV_KEYBOARD_CTRL_BTN_FLAGS | 5,
+    LV_KEYBOARD_CTRL_BTN_FLAGS | 5, LV_KB_BTN(3), LV_KB_BTN(3), LV_KB_BTN(3), LV_KB_BTN(3), LV_KB_BTN(3), LV_KB_BTN(3), LV_KB_BTN(3), LV_KB_BTN(3), LV_KB_BTN(3), LV_KEYBOARD_CTRL_BTN_FLAGS | 5,
+    LV_KEYBOARD_CTRL_BTN_FLAGS | 2, LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KEYBOARD_CTRL_BTN_FLAGS | 2,
     LV_KEYBOARD_CTRL_BTN_FLAGS | 2,
 #if LV_USE_ARABIC_PERSIAN_CHARS == 1
     LV_KEYBOARD_CTRL_BTN_FLAGS | 2,
 #endif
-    LV_BTNMATRIX_CTRL_CHECKED | 2, 6, LV_BTNMATRIX_CTRL_CHECKED | 2, LV_KEYBOARD_CTRL_BTN_FLAGS | 2
+    LV_BTNMATRIX_CTRL_CHECKED | 1, 6, LV_BTNMATRIX_CTRL_CHECKED | 1, LV_KEYBOARD_CTRL_BTN_FLAGS | 2
 };
 
-static const char * const default_kb_map_uc[] = {"1#", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", LV_SYMBOL_BACKSPACE, "\n",
-                                                 "abc", "A", "S", "D", "F", "G", "H", "J", "K", "L", "&", "|", "\n",
-                                                 "_", "-", "Z", "X", "C", "V", "B", "N", "M", ".", ",", ":", "\n",
-                                                 "Ctrl+C",
+static const char * const default_kb_map_uc[] = {"Ctrl+Z", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "Ctrl+R", "\n",
+                                                 "Ctrl+C", "A", "S", "D", "F", "G", "H", "J", "K", "L", "Ctrl+X", "\n",
+                                                 "abc", "Z", "X", "C", "V", "B", "N", "M", LV_SYMBOL_BACKSPACE, "\n",
+                                                 "123",
 #if LV_USE_ARABIC_PERSIAN_CHARS == 1
                                                  "أب",
 #endif
@@ -80,15 +80,16 @@ static const char * const default_kb_map_uc[] = {"1#", "Q", "W", "E", "R", "T", 
                                                 };
 
 static const lv_btnmatrix_ctrl_t default_kb_ctrl_uc_map[] = {
-    LV_KEYBOARD_CTRL_BTN_FLAGS | 5, LV_KB_BTN(4), LV_KB_BTN(4), LV_KB_BTN(4), LV_KB_BTN(4), LV_KB_BTN(4), LV_KB_BTN(4), LV_KB_BTN(4), LV_KB_BTN(4), LV_KB_BTN(4), LV_KB_BTN(4), LV_BTNMATRIX_CTRL_CHECKED | 7,
-    LV_KEYBOARD_CTRL_BTN_FLAGS | 6, LV_KB_BTN(3), LV_KB_BTN(3), LV_KB_BTN(3), LV_KB_BTN(3), LV_KB_BTN(3), LV_KB_BTN(3), LV_KB_BTN(3), LV_KB_BTN(3), LV_KB_BTN(3), LV_KB_BTN(3), LV_BTNMATRIX_CTRL_CHECKED | 7,
-    LV_BTNMATRIX_CTRL_CHECKED | LV_KB_BTN(1), LV_BTNMATRIX_CTRL_CHECKED | LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_BTNMATRIX_CTRL_CHECKED | LV_KB_BTN(1), LV_BTNMATRIX_CTRL_CHECKED | LV_KB_BTN(1), LV_BTNMATRIX_CTRL_CHECKED | LV_KB_BTN(1),
+    LV_KEYBOARD_CTRL_BTN_FLAGS | 5, LV_KB_BTN(4), LV_KB_BTN(4), LV_KB_BTN(4), LV_KB_BTN(4), LV_KB_BTN(4), LV_KB_BTN(4), LV_KB_BTN(4), LV_KB_BTN(4), LV_KB_BTN(4), LV_KB_BTN(4), LV_KEYBOARD_CTRL_BTN_FLAGS | 5,
+    LV_KEYBOARD_CTRL_BTN_FLAGS | 5, LV_KB_BTN(3), LV_KB_BTN(3), LV_KB_BTN(3), LV_KB_BTN(3), LV_KB_BTN(3), LV_KB_BTN(3), LV_KB_BTN(3), LV_KB_BTN(3), LV_KB_BTN(3), LV_KEYBOARD_CTRL_BTN_FLAGS | 5,
+    LV_KEYBOARD_CTRL_BTN_FLAGS | 2, LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KEYBOARD_CTRL_BTN_FLAGS | 2,
     LV_KEYBOARD_CTRL_BTN_FLAGS | 2,
 #if LV_USE_ARABIC_PERSIAN_CHARS == 1
     LV_KEYBOARD_CTRL_BTN_FLAGS | 2,
 #endif
-    LV_BTNMATRIX_CTRL_CHECKED | 2, 6, LV_BTNMATRIX_CTRL_CHECKED | 2, LV_KEYBOARD_CTRL_BTN_FLAGS | 2
+    LV_BTNMATRIX_CTRL_CHECKED | 1, 6, LV_BTNMATRIX_CTRL_CHECKED | 1, LV_KEYBOARD_CTRL_BTN_FLAGS | 2
 };
+
 #if LV_USE_ARABIC_PERSIAN_CHARS == 1
 static const char * const default_kb_map_ar[] = {
     "1#", "ض", "ص", "ث", "ق", "ف", "غ", "ع", "ه", "خ", "ح", "ج", "\n",
@@ -105,10 +106,10 @@ static const lv_btnmatrix_ctrl_t default_kb_ctrl_ar_map[] = {
 };
 #endif
 
-static const char * const default_kb_map_spec[] = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", LV_SYMBOL_BACKSPACE, "\n",
-                                                   "abc", "+", "-", "/", "*", "=", "%", "!", "?", "#", "<", ">", "\n",
-                                                   "\\",  "@", "$", "(", ")", "{", "}", "[", "]", ";", "\"", "'", "\n",
-                                                   LV_SYMBOL_KEYBOARD,
+static const char * const default_kb_map_spec[] = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "&", "|", "\n",
+                                                   "+", "_", "-", "/", "*", "=", "%", "!", "?", "#", "<", ">", ".", ",", ":", "\n",
+                                                   "\\",  "@", "$", "(", ")", "{", "}", "[", "]", ";", "\"", "'", LV_SYMBOL_BACKSPACE, "\n",
+                                                   "abc",
 #if LV_USE_ARABIC_PERSIAN_CHARS == 1
                                                    "أب",
 #endif
@@ -116,14 +117,14 @@ static const char * const default_kb_map_spec[] = {"1", "2", "3", "4", "5", "6",
                                                   };
 
 static const lv_btnmatrix_ctrl_t default_kb_ctrl_spec_map[] = {
-    LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_BTNMATRIX_CTRL_CHECKED | 2,
-    LV_KEYBOARD_CTRL_BTN_FLAGS | 2, LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1),
-    LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1),
+    LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1),
+    LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1),
+    LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KEYBOARD_CTRL_BTN_FLAGS | 2,
     LV_KEYBOARD_CTRL_BTN_FLAGS | 2,
 #if LV_USE_ARABIC_PERSIAN_CHARS == 1
     LV_KEYBOARD_CTRL_BTN_FLAGS | 2,
 #endif
-    LV_BTNMATRIX_CTRL_CHECKED | 2, 6, LV_BTNMATRIX_CTRL_CHECKED | 2, LV_KEYBOARD_CTRL_BTN_FLAGS | 2
+    LV_BTNMATRIX_CTRL_CHECKED | 1, 6, LV_BTNMATRIX_CTRL_CHECKED | 1, LV_KEYBOARD_CTRL_BTN_FLAGS | 2
 };
 
 static const char * const default_kb_map_num[] = {"1", "2", "3", LV_SYMBOL_KEYBOARD, "\n",
@@ -360,7 +361,7 @@ void lv_keyboard_def_event_cb(lv_event_t * e)
         lv_keyboard_update_ctrl_map(obj);
         return;
     }
-    else if (strcmp(txt, "1#") == 0) {
+    else if (strcmp(txt, "123") == 0) {
         keyboard->mode = LV_KEYBOARD_MODE_SPECIAL;
         lv_btnmatrix_set_map(obj, kb_map[LV_KEYBOARD_MODE_SPECIAL]);
         lv_keyboard_update_ctrl_map(obj);
