@@ -48,8 +48,8 @@ const lv_obj_class_t lv_keyboard_class = {
     .base_class = &lv_btnmatrix_class
 };
 
-static const char * const default_kb_map_lc[] = {"Ctrl+Z", "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "Ctrl+R", "\n",
-                                                 "Ctrl+C", "a", "s", "d", "f", "g", "h", "j", "k", "l", "Ctrl+X", "\n",
+static const char * const default_kb_map_lc[] = {"Ctrl+Z", "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", LV_SYMBOL_KEYBOARD, "\n",
+                                                 "Ctrl+C", "a", "s", "d", "f", "g", "h", "j", "k", "l", "Tab", "\n",
                                                  "ABC", "z", "x", "c", "v", "b", "n", "m", LV_SYMBOL_BACKSPACE, "\n",
                                                  "123",
 #if LV_USE_ARABIC_PERSIAN_CHARS == 1
@@ -69,8 +69,8 @@ static const lv_btnmatrix_ctrl_t default_kb_ctrl_lc_map[] = {
     LV_BTNMATRIX_CTRL_CHECKED | 1, 6, LV_BTNMATRIX_CTRL_CHECKED | 1, LV_KEYBOARD_CTRL_BTN_FLAGS | 2
 };
 
-static const char * const default_kb_map_uc[] = {"Ctrl+Z", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "Ctrl+R", "\n",
-                                                 "Ctrl+C", "A", "S", "D", "F", "G", "H", "J", "K", "L", "Ctrl+X", "\n",
+static const char * const default_kb_map_uc[] = {"Ctrl+Z", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", LV_SYMBOL_KEYBOARD, "\n",
+                                                 "Ctrl+C", "A", "S", "D", "F", "G", "H", "J", "K", "L", "Tab", "\n",
                                                  "abc", "Z", "X", "C", "V", "B", "N", "M", LV_SYMBOL_BACKSPACE, "\n",
                                                  "123",
 #if LV_USE_ARABIC_PERSIAN_CHARS == 1
@@ -106,7 +106,7 @@ static const lv_btnmatrix_ctrl_t default_kb_ctrl_ar_map[] = {
 };
 #endif
 
-static const char * const default_kb_map_spec[] = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "&", "|", "\n",
+static const char * const default_kb_map_spec[] = {"~", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "&", "|", "\n",
                                                    "+", "_", "-", "/", "*", "=", "%", "!", "?", "#", "<", ">", ".", ",", ":", "\n",
                                                    "\\",  "@", "$", "(", ")", "{", "}", "[", "]", ";", "\"", "'", LV_SYMBOL_BACKSPACE, "\n",
                                                    "abc",
@@ -117,7 +117,7 @@ static const char * const default_kb_map_spec[] = {"1", "2", "3", "4", "5", "6",
                                                   };
 
 static const lv_btnmatrix_ctrl_t default_kb_ctrl_spec_map[] = {
-    LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1),
+    LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1),
     LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1),
     LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KB_BTN(1), LV_KEYBOARD_CTRL_BTN_FLAGS | 2,
     LV_KEYBOARD_CTRL_BTN_FLAGS | 2,
@@ -455,6 +455,15 @@ void lv_keyboard_def_event_cb(lv_event_t * e)
     }
     else if (strcmp(txt,"Ctrl+Z") == 0){
         sig_tstp_sent = true;
+    }
+    else if (strcmp(txt,"Tab") == 0){
+        command_buffer[command_buffer_pos] = '\t';
+        command_ready_to_send = true;
+
+        if (lv_textarea_get_one_line(keyboard->ta)) {
+            lv_res_t res = lv_event_send(keyboard->ta, LV_EVENT_READY, NULL);
+            if (res != LV_RES_OK) return;
+        }
     }
     else {
         if (command_buffer_pos < BUFFER_SIZE) {
