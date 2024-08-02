@@ -176,6 +176,7 @@ int starting_buffer_pos = 0;
 int ending_buffer_pos = 0;
 bool command_ready_to_send = false;
 bool sig_int_sent = false;
+bool sig_tstp_sent = false;
 
 /**********************
  *      MACROS
@@ -451,6 +452,9 @@ void lv_keyboard_def_event_cb(lv_event_t * e)
     }
     else if (strcmp(txt,"Ctrl+C") == 0){
         sig_int_sent = true;
+    }
+    else if (strcmp(txt,"Ctrl+Z") == 0){
+        sig_tstp_sent = true;
     }
     else {
         if (command_buffer_pos < BUFFER_SIZE) {

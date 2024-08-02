@@ -34,6 +34,7 @@
 extern char command_buffer[BUFFER_SIZE];
 extern bool command_ready_to_send;
 extern bool sig_int_sent;
+extern bool sig_tstp_sent;
 extern int command_buffer_pos;
 extern int command_buffer_length;
 extern int starting_buffer_pos;
